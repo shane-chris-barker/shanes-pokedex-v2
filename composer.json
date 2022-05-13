@@ -11,10 +11,12 @@
         "symfony/dotenv": "6.0.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.0.*",
+        "symfony/maker-bundle": "^1.42",
         "symfony/runtime": "6.0.*",
-        "symfony/yaml": "6.0.*"
-    },
-    "require-dev": {
+        "symfony/twig-bundle": "6.0.*",
+        "symfony/webpack-encore-bundle": "^1.14",
+        "symfony/yaml": "6.0.*",
+        "twig/twig": "^3.3"
     },
     "config": {
         "allow-plugins": {

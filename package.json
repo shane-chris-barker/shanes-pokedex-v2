@@ -6,6 +6,7 @@
         "@symfony/webpack-encore": "^2.1.0",
         "axios": "^0.27.2",
         "core-js": "^3.0.0",
+        "file-loader": "^6.0.0",
         "prop-types": "^15.8.1",
         "react": "^18.1.0",
         "react-dom": "^18.1.0",

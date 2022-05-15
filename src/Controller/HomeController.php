@@ -17,27 +17,5 @@ class HomeController extends AbstractController
         );
     }
 
-    #[Route('/pokemon', name: 'pokedex_get', methods: ['GET'])]
-    public function getPokemon()
-    {
 
-        $pokemon = [
-            [
-                'id' => 1,
-                'name' => 'Pikachu'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Squirtle'
-            ]
-        ];
-        $response = new Response();
-
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-
-        $response->setContent(json_encode($pokemon));
-
-        return $response;
-    }
 }

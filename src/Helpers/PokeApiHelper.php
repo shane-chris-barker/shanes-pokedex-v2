@@ -28,14 +28,21 @@ class PokeApiHelper {
         try {
             $apiResponse = $this->guzzleClient->get($endpoint.$searchTerm);
         } catch (\Exception $e) {
+            // what is the exception?
+            $errorMessage = $e->getMessage();
+            if (404 === $e->getCode()) {
+                // 404 means the Pokemon doesn't exist - Display a nicer error message
+                $errorMessage = "Hmmm - We can't seem to find a Pokemon named {$searchTerm} - Is it spelt correctly?";
+            }
             return [
                 'error' => true,
-                'data'  => $e->getMessage()
+                'data'  => $errorMessage
             ];
         }
 
         $decodedData['data'] = json_decode($apiResponse->getBody()->getContents());
 
+        // if we also want the Pokemon's abilities, we'll grab the info from the abilities endpoint
         if ($andGetAbilities) {
             $i = 0;
             foreach($decodedData['data']->abilities as $ability) {

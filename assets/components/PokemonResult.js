@@ -12,7 +12,7 @@ class PokemonResult extends Component {
                 <section className="row-section">
                     <div className="container col-6 offset-3">
                         <div className="card">
-                            <h5 className="card-header text-center">{this.pokemon.name}</h5>
+                            <h5 className="card-header text-center p-5">{this.pokemon.name}</h5>
 
                             <div className="row">
                                 <div className="col-6">
@@ -50,12 +50,25 @@ class PokemonResult extends Component {
                                     {this.pokemon.pokedex.pokedexDescription}
                                 </p>
                             </div>
+                            <div className="col-6 offset-3">
+                                <hr className="col-12" />
+                            </div>
+                            <div className="card-body text-center">
+                                <h5 className="col-12 ">Base Stats</h5>
+                                <div className="row">
+                                    {this.pokemon.stats.map((stat) =>
+                                        <p key={stat.name} className="p-2 col-4">
+                                            <strong>{stat.name}</strong> : {stat.value}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
                             <ul className="list-group list-group-flush mt-2">
                                 <h5 className="col-12 text-center">Abilities</h5>
                                 {this.pokemon.abilities.map((ability) =>
-                                    <div key={ability.name} className="p-2">
-                                        <strong><p className="col-12 text-center">{ability.name}</p></strong>
-                                        <p className="col-12 text-center">{ability.effect}</p>
+                                    <div key={ability.name} className="p-2 text-center">
+                                        <strong><p className="col-12">{ability.name}</p></strong>
+                                        <p className="col-12 ">{ability.effect}</p>
                                         <p className="col-12">{ability.affect}</p>
                                     </div>
                                 )}

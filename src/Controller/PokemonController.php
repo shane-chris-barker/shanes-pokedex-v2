@@ -50,18 +50,20 @@ class PokemonController extends AbstractController
 
         // get basic pokemon data and species data too
         $apiResponse            = $this->pokeApiHelper->getPokemon($searchTerm, false, true);
-        $apiResponse['species'] = $this->pokeApiHelper->getPokemon($searchTerm, true);
-        // something went wrong when calling the PokeApi so return an error with the error string
+
+        // probably a 404 and the name searched for is a typo or something - let the front end know
         if ($apiResponse['error'] === true) {
             $response->setContent(json_encode($apiResponse));
             return $response;
-
         }
+
+        $apiResponse['species'] = $this->pokeApiHelper->getPokemon($searchTerm, true);
         $data['name']       = ucfirst($searchTerm);
         $data['abilities']  = $this->pokemonDataHelper->sortAbilities($apiResponse['data']->abilities);
         $data['games']      = $this->pokemonDataHelper->getGamesAppearedIn($apiResponse['data']->game_indices);
         $data['images']     = $this->pokemonDataHelper->getSprites($apiResponse['data']->sprites);
         $data['pokedex']    = $this->pokemonDataHelper->getPokedexData($apiResponse['species']['data']);
+        $data['stats']      = $this->pokemonDataHelper->getStats($apiResponse['data']->stats);
 
 
         $response->setContent(json_encode($data));

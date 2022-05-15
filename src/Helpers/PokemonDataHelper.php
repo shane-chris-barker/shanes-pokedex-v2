@@ -62,8 +62,7 @@ class PokemonDataHelper {
      */
     public function getSprites(object $pokemonSprites) : array
     {
-        $spriteData     = [];
-        $i = 0;
+        $spriteData                                 = [];
         $spriteData['default']['back']['image']     = $pokemonSprites->back_default;
         $spriteData['default']['front']['image']    = $pokemonSprites->front_default;
         $spriteData['shiny']['front']['image']      = $pokemonSprites->front_shiny;
@@ -92,4 +91,21 @@ class PokemonDataHelper {
         return $data;
     }
 
+    /**
+     * @param array $stats
+     * @return array
+     *
+     * Sort out the stats (HP, Speed, Attack etc)
+     */
+    public function getStats(array $stats) : array {
+        $data   = [];
+        $i      = 0;
+        foreach ($stats as $stat) {
+            $data[$i]['name']   = ucwords(str_replace("-", " ", $stat->stat->name));
+            $data[$i]['value']  = $stat->base_stat;
+            $i++;
+        }
+
+        return $data;
+    }
 }

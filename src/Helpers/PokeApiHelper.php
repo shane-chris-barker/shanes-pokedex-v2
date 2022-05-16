@@ -65,4 +65,20 @@ class PokeApiHelper {
 
         return $decodedData;
     }
+
+    // TODO Not yet implemented
+    public function getEvolutionChain(string $evolutionUrl) {
+        try {
+            $apiResponse = $this->guzzleClient->get($evolutionUrl);
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'data'  => $e->getMessage()
+            ];
+        }
+
+        $decodedData['data']= json_decode($apiResponse->getBody()->getContents());
+        dd($decodedData);
+
+    }
 }

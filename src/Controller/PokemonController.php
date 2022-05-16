@@ -57,9 +57,11 @@ class PokemonController extends AbstractController
             return $response;
         }
 
-        $apiResponse['species'] = $this->pokeApiHelper->getPokemon($searchTerm, true);
-        $data['name']       = ucfirst($searchTerm);
-        $data['abilities']  = $this->pokemonDataHelper->sortAbilities($apiResponse['data']->abilities);
+        $apiResponse['species']     = $this->pokeApiHelper->getPokemon($searchTerm, true);
+        // TODO - finish implementing evolution chain
+        //$apiResponse['evolution']   = $this->pokeApiHelper->getEvolutionChain($apiResponse['species']['data']->evolution_chain->url);
+        $data['name']               = ucfirst($searchTerm);
+        $data['abilities']          = $this->pokemonDataHelper->sortAbilities($apiResponse['data']->abilities);
         $data['games']      = $this->pokemonDataHelper->getGamesAppearedIn($apiResponse['data']->game_indices);
         $data['images']     = $this->pokemonDataHelper->getSprites($apiResponse['data']->sprites);
         $data['pokedex']    = $this->pokemonDataHelper->getPokedexData($apiResponse['species']['data']);

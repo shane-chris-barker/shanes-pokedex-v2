@@ -8,7 +8,7 @@ import Error from '../components/Error';
 class Home extends Component {
     constructor() {
         super();
-        this.state = { pokemon: [], loading: false, displayResult: false, error: false, errorMessage: ""};
+        this.state = { pokemon: [], displayResult: false, error: false, errorMessage: ""};
         this.getPokemon = this.getPokemon.bind(this);
     }
 
@@ -21,7 +21,6 @@ class Home extends Component {
                     this.setState({
                         pokemon: [],
                         displayResult: false,
-                        loading: false,
                         error: true,
                         errorMessage: pokemon.data.data
                     });
@@ -29,7 +28,6 @@ class Home extends Component {
                     this.setState({
                         pokemon: pokemon.data,
                         displayResult: true,
-                        loading: false,
                         error: false,
                         errorMessage: ""
                     });
@@ -57,9 +55,6 @@ class Home extends Component {
                         <Error errorMessage={this.state.errorMessage}/>
                     }
 
-                    {/*{loading &&*/}
-
-                    {/*}*/}
                     {displayResult &&
                         <PokemonResult pokemon={this.state.pokemon} key={this.state.pokemon.name} />
                     }

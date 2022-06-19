@@ -6,7 +6,6 @@ use App\Classes\Location\LocationSearch;
 use App\Classes\Pokemon\PokemonSearch;
 use App\Services\PokeApiSearchInterface;
 
-
 class Search {
 
     private array $possibleSearches;
@@ -46,7 +45,4 @@ class Search {
 
         return $searches;
     }
-
-
-
 }

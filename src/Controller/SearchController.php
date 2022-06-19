@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Classes\Search;
 use App\Classes\Sort;
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,10 +42,13 @@ class SearchController extends AbstractController
             return $response;
         }
 
+        // do the search
         $searches       = $this->search->getPossibleSearches();
-
         $apiResponse    = $this->search->doSearch($searchTerm, $searches[$searchType]);
-        $sortedData     = $this->sort->sort($apiResponse, $this->sort->sorts[$searchType]);
+
+        // do the sort
+        $sorts          = $this->sort->getPossibleSorts();
+        $sortedData     = $this->sort->sort($apiResponse, $sorts[$searchType]);
 
         $response->setContent(json_encode($sortedData));
         return $response;

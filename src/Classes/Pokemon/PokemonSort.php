@@ -7,6 +7,10 @@ use App\Services\PokeApiSortInterface;
 
 class PokemonSort implements PokeApiSortInterface {
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function sort(array $data): array
     {
         $data['abilities']          = $this->sortAbilities($data['data']->abilities);
@@ -122,5 +126,4 @@ class PokemonSort implements PokeApiSortInterface {
 
         return $data;
     }
-
 }

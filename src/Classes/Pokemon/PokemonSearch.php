@@ -61,7 +61,6 @@ class PokemonSearch implements PokeApiSearchInterface {
         $speciesResponse = $this->guzzleClient->get(self::SPECIES_ENDPOINT.$value);
         $decodedData['species']['data']  = json_decode($speciesResponse->getBody()->getContents());
 
-//        dd($decodedData);
         $decodedData['evolution'] = $this->getEvolutionChain(
             $decodedData['species']['data']->evolution_chain->url,
             $value,
@@ -135,7 +134,7 @@ class PokemonSearch implements PokeApiSearchInterface {
             $i = 0;
             foreach ($data['chain'] as $evolution) {
                 // we don't need to call and get data for the Pokemon that was initially searched for.
-                if (false === $evolution['currentResult']) {
+//                if (false === $evolution['currentResult']) {
                     try {
                         $response       = $this->guzzleClient->get(self::POKEMON_ENDPOINT.lcfirst($evolution['name']));
                         $evolvedApiData = json_decode($response->getBody()->getContents());
@@ -147,7 +146,7 @@ class PokemonSearch implements PokeApiSearchInterface {
                         ];
                     }
                     $data['chain'][$i]['image'] = $evolvedApiData->sprites->front_default;
-                }
+//                }
                 $i++;
             }
         }

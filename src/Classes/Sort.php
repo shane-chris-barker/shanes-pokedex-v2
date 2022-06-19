@@ -2,13 +2,13 @@
 
 namespace App\Classes;
 
-use App\Classes\Location\LocationSearch;
 use App\Classes\Location\LocationSort;
-use App\Classes\Pokemon\PokemonSearch;
 use App\Classes\Pokemon\PokemonSort;
 use App\Services\PokeApiSortInterface;
 
 class Sort {
+
+    private array $sorts;
 
     /**
      * @param LocationSort $locationSort
@@ -21,14 +21,27 @@ class Sort {
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function getPossibleSorts(): array
+    {
+        $sorts = [];
 
+        foreach ($this->sorts as $key => $value) {
+            $sorts[$key] = $value;
+        }
+
+        return $sorts;
+    }
 
     /**
      * @param array $data
      * @param PokeApiSortInterface $sortInterface
      * @return array
      */
-    public function sort(array $data, PokeApiSortInterface $sortInterface) {
+    public function sort(array $data, PokeApiSortInterface $sortInterface): array
+    {
         return $sortInterface->sort($data);
     }
 }

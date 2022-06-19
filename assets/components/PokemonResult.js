@@ -12,7 +12,7 @@ class PokemonResult extends Component {
                 <section className="row-section">
                     <div className="container col-6 offset-3">
                         <div className="card">
-                            <h5 className="card-header text-center p-5">{this.pokemon.name}</h5>
+                            <h5 className="card-header text-center p-5 ">{this.pokemon.data.name}</h5>
 
                             <div className="row">
                                 <div className="col-6">
@@ -21,7 +21,6 @@ class PokemonResult extends Component {
                                         src={this.pokemon.images.default.front.image}
                                         className="col-6"
                                         alt="Default front image"
-
                                     />
                                     <img
                                         src={this.pokemon.images.default.back.image}

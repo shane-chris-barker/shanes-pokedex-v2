@@ -51,22 +51,24 @@ class Home extends Component {
         const error = this.state.error;
         return(
             <div>
-                <section className="row-section">
-                    <div>
-                        <Form handleSearch={this.handleSearch} />
-                    </div>
-                    {loading &&
-                        <LoadingSpinner />
-                    }
-                    {error && !loading &&
-                        <Error errorMessage={this.state.errorMessage}/>
-                    }
+                <div className="container">
+                    <section className="row-section col-6 offset-3">
+                        <div>
+                            <Form handleSearch={this.handleSearch} />
+                        </div>
+                        {loading &&
+                            <LoadingSpinner />
+                        }
+                        {error && !loading &&
+                            <Error errorMessage={this.state.errorMessage}/>
+                        }
 
-                    {displayResult &&
-                        <PokemonResult pokemon={this.state.pokemon} key={this.state.pokemon.name} />
-                    }
+                        {displayResult &&
+                            <PokemonResult pokemon={this.state.pokemon} key={this.state.pokemon.name} />
+                        }
 
-                </section>
+                    </section>
+                </div>
             </div>
         )
     }

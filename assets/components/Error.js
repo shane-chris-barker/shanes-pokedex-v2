@@ -9,15 +9,13 @@ class Error extends Component {
     }
     render() {
         return(
-            <div>
+            <div className='mt-5'>
                 <section className="row-section">
-                    <div className="container col-6 offset-3">
-                        <div className="alert alert-danger text-center">
-                            <i className="fa fa-exclamation-circle fa-3x" />
-                            <br/>
-                            <br/>
-                            {this.errorMessage}
-                        </div>
+                    <div className="alert alert-danger text-center">
+                        <i className="fa fa-exclamation-circle fa-3x" />
+                        <br/>
+                        <br/>
+                        {this.errorMessage}
                     </div>
                 </section>
             </div>

@@ -46,10 +46,14 @@ class SearchController extends AbstractController
         $searches       = $this->search->getPossibleSearches();
         $apiResponse    = $this->search->doSearch($searchTerm, $searches[$searchType]);
 
-        // do the sort
+        if (true === $apiResponse['error']) { // didn't find anything
+            $response->setContent(json_encode($apiResponse));
+            return $response;
+        }
+
+        // do the sort because the data is good
         $sorts          = $this->sort->getPossibleSorts();
         $sortedData     = $this->sort->sort($apiResponse, $sorts[$searchType]);
-
         $response->setContent(json_encode($sortedData));
         return $response;
     }

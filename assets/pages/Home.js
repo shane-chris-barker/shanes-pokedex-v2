@@ -4,11 +4,13 @@ import axios from 'axios';
 import PokemonResult from "../components/PokemonResult";
 import Form from "../components/Form";
 import Error from '../components/Error';
+import Spinner from '../components/LoadingSpinner';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 class Home extends Component {
     constructor() {
         super();
-        this.state = { pokemon: [], displayResult: false, error: false, errorMessage: ""};
+        this.state = { pokemon: [], displayResult: false, error: false, errorMessage: "", loading: false};
         this.getPokemon = this.getPokemon.bind(this);
     }
 
@@ -22,14 +24,16 @@ class Home extends Component {
                         pokemon: [],
                         displayResult: false,
                         error: true,
-                        errorMessage: pokemon.data.data
+                        errorMessage: pokemon.data.data,
+                        loading: false
                     });
                 } else {
                     this.setState({
                         pokemon: pokemon.data,
                         displayResult: true,
                         error: false,
-                        errorMessage: ""
+                        errorMessage: "",
+                        loading: false
                     });
                 }
             });
@@ -51,6 +55,9 @@ class Home extends Component {
                     <div>
                         <Form handleSearch={this.handleSearch} />
                     </div>
+                    {loading &&
+                        <LoadingSpinner />
+                    }
                     {error && !loading &&
                         <Error errorMessage={this.state.errorMessage}/>
                     }

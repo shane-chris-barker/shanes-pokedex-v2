@@ -14,7 +14,7 @@ class Home extends Component {
 
     getPokemon(name) {
         this.setState({displayResult: false, loading: true});
-        let url = 'http://localhost:8080/pokemon/'+name
+        let url = 'http://localhost:8080/search/'+name
         axios.get(url)
             .then(pokemon => {
                 if (true === pokemon.data.error) {

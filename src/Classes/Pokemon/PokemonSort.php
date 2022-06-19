@@ -1,14 +1,32 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Classes\Pokemon;
 
-class PokemonDataHelper {
+
+use App\Services\PokeApiSortInterface;
+
+class PokemonSort implements PokeApiSortInterface {
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function sort(array $data): array
+    {
+        $data['abilities']          = $this->sortAbilities($data['data']->abilities);
+        $data['games']              = $this->getGamesAppearedIn($data['data']->game_indices);
+        $data['images']             = $this->getSprites($data['data']->sprites);
+        $data['pokedex']            = $this->getPokedexData($data['species']['data']);
+        $data['stats']              = $this->getStats($data['data']->stats);
+
+        return $data;
+    }
 
     /**
      * @param array $abilities
      * @return array
      */
-    public function sortAbilities(array $abilities): array
+    private function sortAbilities(array $abilities): array
     {
         $abilityArray       = [];
         $abilityCount       = 0;
@@ -44,7 +62,7 @@ class PokemonDataHelper {
      * @param array $games
      * @return array
      */
-    public function getGamesAppearedIn(array $games): array
+    private function getGamesAppearedIn(array $games): array
     {
         $gameArray = [];
         $gameCount = 0;
@@ -60,7 +78,7 @@ class PokemonDataHelper {
      * @param object $pokemonSprites
      * @return array
      */
-    public function getSprites(object $pokemonSprites) : array
+    private function getSprites(object $pokemonSprites) : array
     {
         $spriteData                                 = [];
         $spriteData['default']['back']['image']     = $pokemonSprites->back_default;
@@ -75,7 +93,7 @@ class PokemonDataHelper {
      * @param object $speciesData
      * @return array
      */
-    public function getPokedexData(object $speciesData) : array
+    private function getPokedexData(object $speciesData) : array
     {
         $data                   = [];
         $data['happiness']      = $speciesData->base_happiness;
@@ -97,7 +115,7 @@ class PokemonDataHelper {
      *
      * Sort out the stats (HP, Speed, Attack etc)
      */
-    public function getStats(array $stats) : array {
+    private function getStats(array $stats) : array {
         $data   = [];
         $i      = 0;
         foreach ($stats as $stat) {

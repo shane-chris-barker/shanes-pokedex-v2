@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Classes\Pokemon;
+
+use App\Services\PokeApiSearchInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class PokeApiHelper {
+class PokemonSearch implements PokeApiSearchInterface {
 
     const POKEMON_ENDPOINT = "https://pokeapi.co/api/v2/pokemon/";
     const SPECIES_ENDPOINT = "https://pokeapi.co/api/v2/pokemon-species/";
@@ -14,26 +16,22 @@ class PokeApiHelper {
         $this->guzzleClient = $guzzleClient;
     }
 
+
     /**
-     * @param string $searchTerm
-     * @param bool $speciesOnly
-     * @param bool $andGetAbilities
+     * @param string $value
      * @return array
      * @throws GuzzleException
      */
-    public function getPokemon(string $searchTerm, bool $speciesOnly = false, bool $andGetAbilities = false) : array {
-
-        // get basic info or full species data?
-        $searchTermSlug = str_replace(" ", "-", $searchTerm);
-        $endpoint       = (true === $speciesOnly) ? self::SPECIES_ENDPOINT : self::POKEMON_ENDPOINT;
+    public function get(string $value): array
+    {
         try {
-            $apiResponse = $this->guzzleClient->get($endpoint.$searchTermSlug);
+            $apiResponse = $this->guzzleClient->get(self::POKEMON_ENDPOINT.$value);
         } catch (\Exception $e) {
             // what is the exception?
             $errorMessage = $e->getMessage();
             if (404 === $e->getCode()) {
                 // 404 means the Pokemon doesn't exist - Display a nicer error message
-                $errorMessage = "Hmmm - We can't seem to find a Pokemon named {$searchTerm} - Is it spelt correctly?";
+                $errorMessage = "Hmmm - We can't seem to find a Pokemon named {$value} - Is it spelt correctly?";
             }
             return [
                 'error' => true,
@@ -43,28 +41,37 @@ class PokeApiHelper {
 
         $decodedData['data'] = json_decode($apiResponse->getBody()->getContents());
 
-        // if we also want the Pokemon's abilities, we'll grab the info from the abilities endpoint
-        if ($andGetAbilities) {
-            $i = 0;
-            foreach($decodedData['data']->abilities as $ability) {
-
-                try {
-                    $apiResponse = $this->guzzleClient->get($ability->ability->url);
-                } catch (\Exception $e) {
-                    return [
-                        'error' => true,
-                        'data'  => $e->getMessage()
-                    ];
-                }
-                $decodedData['data']->abilities[$i]->name = $ability->ability->name;
-                $decodedData['data']->abilities[$i]->data = json_decode($apiResponse->getBody()->getContents());
-                $i++;
+        // we managed to find the basic info for the searh term - Go and get the species and ability data
+        $i = 0;
+        foreach($decodedData['data']->abilities as $ability) {
+            try {
+                $apiResponse = $this->guzzleClient->get($ability->ability->url);
+            } catch (\Exception $e) {
+                return [
+                    'error' => true,
+                    'data'  => $e->getMessage()
+                ];
             }
+            $decodedData['data']->abilities[$i]->name = $ability->ability->name;
+            $decodedData['data']->abilities[$i]->data = json_decode($apiResponse->getBody()->getContents());
+            $i++;
+
         }
 
+        $speciesResponse = $this->guzzleClient->get(self::SPECIES_ENDPOINT.$value);
+        $decodedData['species']['data']  = json_decode($speciesResponse->getBody()->getContents());
+
+        $decodedData['evolution'] = $this->getEvolutionChain(
+            $decodedData['species']['data']->evolution_chain->url,
+            $value,
+            $decodedData['data']->sprites->front_default
+        );
+
+        // and finally, get any evolutions chains
         $decodedData['error']   = false;
 
         return $decodedData;
+
     }
 
     /**
@@ -74,7 +81,7 @@ class PokeApiHelper {
      * @return array
      * @throws GuzzleException
      */
-    public function getEvolutionChain(string $evolutionUrl, string $pokemonName, string $selectedPokemonImageUrl): array {
+    private function getEvolutionChain(string $evolutionUrl, string $pokemonName, string $selectedPokemonImageUrl): array {
         $data = [];
         try {
             $apiResponse = $this->guzzleClient->get($evolutionUrl);
@@ -127,7 +134,7 @@ class PokeApiHelper {
             $i = 0;
             foreach ($data['chain'] as $evolution) {
                 // we don't need to call and get data for the Pokemon that was initially searched for.
-                if (false === $evolution['currentResult']) {
+//                if (false === $evolution['currentResult']) {
                     try {
                         $response       = $this->guzzleClient->get(self::POKEMON_ENDPOINT.lcfirst($evolution['name']));
                         $evolvedApiData = json_decode($response->getBody()->getContents());
@@ -139,10 +146,11 @@ class PokeApiHelper {
                         ];
                     }
                     $data['chain'][$i]['image'] = $evolvedApiData->sprites->front_default;
-                }
+//                }
                 $i++;
             }
         }
         return $data;
     }
+
 }

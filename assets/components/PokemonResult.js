@@ -63,6 +63,23 @@ class PokemonResult extends Component {
                                     )}
                                 </div>
                             </div>
+                            <div className="col-6 offset-3">
+                                <hr className="col-12" />
+                            </div>
+                            <div className="card-body text-center">
+                                <h3 className="col-12 ">Evolution Chain</h3>
+                                {this.pokemon.evolution.chain.length > 0 &&
+                                    <div className="row">
+                                        {this.pokemon.evolution.chain.map((evolution) =>
+                                            <div className="col-4" key={evolution.name}>
+                                                <p><strong>{evolution.name}</strong></p>
+                                                <p>Stage: {evolution.stage}</p>
+                                                <img src={evolution.image} alt={evolution.image + "image"} className='img-fluid'/>
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                            </div>
                             <ul className="list-group list-group-flush mt-2">
                                 <h5 className="col-12 text-center">Abilities</h5>
                                 {this.pokemon.abilities.map((ability) =>

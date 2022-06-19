@@ -26,13 +26,10 @@ class PokemonController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/pokemon/{name}', name: 'pokedex_get', methods: ['GET'])]
-    public function getPokemon(Request $request)
+    public function getPokemon(Request $request): Response
     {
         $searchTerm     = strtolower($request->get('name')); // PokeApi expects lower case
-        $error          = false;
-        $errorArray     = [];
         $data           = [];
-        $apiResponse    = null;
 
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
@@ -49,7 +46,7 @@ class PokemonController extends AbstractController
         }
 
         // get basic pokemon data and species data too
-        $apiResponse            = $this->pokeApiHelper->getPokemon($searchTerm, false, true);
+        $apiResponse = $this->pokeApiHelper->getPokemon($searchTerm, false, true);
 
         // probably a 404 and the name searched for is a typo or something - let the front end know
         if ($apiResponse['error'] === true) {
@@ -58,16 +55,18 @@ class PokemonController extends AbstractController
         }
 
         $apiResponse['species']     = $this->pokeApiHelper->getPokemon($searchTerm, true);
-        // TODO - finish implementing evolution chain
-        //$apiResponse['evolution']   = $this->pokeApiHelper->getEvolutionChain($apiResponse['species']['data']->evolution_chain->url);
+
         $data['name']               = ucfirst($searchTerm);
         $data['abilities']          = $this->pokemonDataHelper->sortAbilities($apiResponse['data']->abilities);
-        $data['games']      = $this->pokemonDataHelper->getGamesAppearedIn($apiResponse['data']->game_indices);
-        $data['images']     = $this->pokemonDataHelper->getSprites($apiResponse['data']->sprites);
-        $data['pokedex']    = $this->pokemonDataHelper->getPokedexData($apiResponse['species']['data']);
-        $data['stats']      = $this->pokemonDataHelper->getStats($apiResponse['data']->stats);
-
-
+        $data['games']              = $this->pokemonDataHelper->getGamesAppearedIn($apiResponse['data']->game_indices);
+        $data['images']             = $this->pokemonDataHelper->getSprites($apiResponse['data']->sprites);
+        $data['pokedex']            = $this->pokemonDataHelper->getPokedexData($apiResponse['species']['data']);
+        $data['stats']              = $this->pokemonDataHelper->getStats($apiResponse['data']->stats);
+        $data['evolution']          = $this->pokeApiHelper->getEvolutionChain(
+            $apiResponse['species']['data']->evolution_chain->url,
+            $searchTerm,
+            $data['images']['default']['front']['image']
+        );
         $response->setContent(json_encode($data));
         return $response;
     }

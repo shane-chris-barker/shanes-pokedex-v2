@@ -12,7 +12,9 @@
         "symfony/dotenv": "6.0.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.0.*",
+        "symfony/mailer": "6.0.*",
         "symfony/maker-bundle": "^1.42",
+        "symfony/messenger": "6.0.*",
         "symfony/runtime": "6.0.*",
         "symfony/twig-bundle": "6.0.*",
         "symfony/webpack-encore-bundle": "^1.14",
@@ -69,5 +71,9 @@
             "allow-contrib": false,
             "require": "6.0.*"
         }
+    },
+    "require-dev": {
+        "symfony/stopwatch": "6.0.*",
+        "symfony/web-profiler-bundle": "6.0.*"
     }
 }

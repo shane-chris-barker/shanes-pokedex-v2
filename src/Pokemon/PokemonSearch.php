@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Classes\Pokemon;
+namespace App\Pokemon;
 
-use App\Services\PokeApiSearchInterface;
+use App\Search\PokeApiSearchInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -15,7 +15,6 @@ class PokemonSearch implements PokeApiSearchInterface {
     public function __construct(Client $guzzleClient) {
         $this->guzzleClient = $guzzleClient;
     }
-
 
     /**
      * @param string $value
@@ -41,7 +40,8 @@ class PokemonSearch implements PokeApiSearchInterface {
 
         $decodedData['data'] = json_decode($apiResponse->getBody()->getContents());
 
-        // we managed to find the basic info for the searh term - Go and get the species and ability data
+        // we managed to find the basic info for the search term - Go and get the species and ability data
+        // TODO SRP Principle - move this to its own method
         $i = 0;
         foreach($decodedData['data']->abilities as $ability) {
             try {
@@ -58,17 +58,16 @@ class PokemonSearch implements PokeApiSearchInterface {
 
         }
 
-        $speciesResponse = $this->guzzleClient->get(self::SPECIES_ENDPOINT.$value);
-        $decodedData['species']['data']  = json_decode($speciesResponse->getBody()->getContents());
+        $decodedData['species']['data'] = $this->getSpeciesData($value);
 
+        // and finally, get any evolutions chains
         $decodedData['evolution'] = $this->getEvolutionChain(
             $decodedData['species']['data']->evolution_chain->url,
             $value,
             $decodedData['data']->sprites->front_default
         );
 
-        // and finally, get any evolutions chains
-        $decodedData['error']   = false;
+        $decodedData['error'] = false;
 
         return $decodedData;
 
@@ -134,23 +133,34 @@ class PokemonSearch implements PokeApiSearchInterface {
             $i = 0;
             foreach ($data['chain'] as $evolution) {
                 // we don't need to call and get data for the Pokemon that was initially searched for.
-//                if (false === $evolution['currentResult']) {
-                    try {
-                        $response       = $this->guzzleClient->get(self::POKEMON_ENDPOINT.lcfirst($evolution['name']));
-                        $evolvedApiData = json_decode($response->getBody()->getContents());
+                try {
+                    $response       = $this->guzzleClient->get(self::POKEMON_ENDPOINT.lcfirst($evolution['name']));
+                    $evolvedApiData = json_decode($response->getBody()->getContents());
 
-                    } catch (\Exception $e) {
-                        return [
-                            'error' => true,
-                            'data'  => $e->getMessage()
-                        ];
-                    }
-                    $data['chain'][$i]['image'] = $evolvedApiData->sprites->front_default;
-//                }
+                } catch (\Exception $e) {
+                    return [
+                        'error' => true,
+                        'data'  => $e->getMessage()
+                    ];
+                }
+                $data['chain'][$i]['image'] = $evolvedApiData->sprites->front_default;
                 $i++;
             }
         }
         return $data;
     }
+
+    private function getSpeciesData(string $evolutionName) : object
+    {
+        $speciesResponse = $this->guzzleClient->get(self::SPECIES_ENDPOINT.$evolutionName);
+        return json_decode($speciesResponse->getBody()->getContents());
+    }
+
+    //TODO - Any extra Pokemon specific validation
+    public function searchTermsAreValid(string $searchTerm): bool
+    {
+        return true;
+    }
+
 
 }

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Classes\Pokemon;
-
-
-use App\Services\PokeApiSortInterface;
+namespace App\Pokemon;
+use App\Sort\PokeApiSortInterface;
 
 class PokemonSort implements PokeApiSortInterface {
 
     /**
      * @param array $data
      * @return array
+     * TODO - This violates OCP principle - Try and figure out how we can use tagged iterators for this.
      */
     public function sort(array $data): array
     {
